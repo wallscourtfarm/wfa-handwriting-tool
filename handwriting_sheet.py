@@ -9982,7 +9982,7 @@ def _ensure_fonts():
 
 TOP_EXIT = set('orvwx')
 W, H     = A4
-MARGIN   = 50
+MARGIN   = 15
 LINE_W   = W - MARGIN * 2
 MM       = 72 / 25.4
 
