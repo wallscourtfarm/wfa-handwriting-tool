@@ -100,7 +100,7 @@ with col2:
     practice_lines = st.selectbox(
         'Practice lines after each item',
         options=[0, 1, 2, 3],
-        index=2,
+        index=1,
         format_func=lambda n: f'{n} line{"s" if n != 1 else ""}',
     )
 
