@@ -10149,11 +10149,12 @@ def _generate_pdf(output_path, rows, title, subtitle, ascend, descend, draw_fn, 
         y = _check_page(y)
         _draw_ruled_row(c, y, ascend, descend, tint=is_pairs)
         draw_fn(c, MARGIN, y, row['text'], font_size)
-        y -= row_h + WORD_GAP
+        y -= row_h
         for _ in range(practice_lines):
             y = _check_page(y)
             _draw_ruled_row(c, y, ascend, descend)
-            y -= row_h + WORD_GAP
+            y -= row_h
+        y -= WORD_GAP
 
     c.save()
     print(f'Saved: {output_path}')
