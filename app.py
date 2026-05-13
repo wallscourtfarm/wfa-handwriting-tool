@@ -2,7 +2,9 @@ import streamlit as st
 import tempfile
 import os
 import sys
-from pathlib import Path
+
+from wfa_shared.logo import logo_html
+from wfa_shared.streamlit_css import inject_wfa_css
 
 sys.path.insert(0, os.path.dirname(__file__))
 import handwriting_sheet as hs
@@ -15,6 +17,8 @@ st.set_page_config(
     layout='centered',
 )
 
+inject_wfa_css(buttons=True, download=True, note=True)
+
 # ── Fonts loaded once ─────────────────────────────────────────────────────────
 
 @st.cache_resource
@@ -23,73 +27,9 @@ def load_fonts():
 
 load_fonts()
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
-
-LOGO_PATH = Path('assets/wfa_logo.jpg')
-
-def _b64_img(path):
-    import base64
-    return base64.b64encode(Path(path).read_bytes()).decode()
-
-# ── Styles ────────────────────────────────────────────────────────────────────
-
-st.markdown("""
-<style>
-    div[data-testid="stMainBlockContainer"] { max-width: 860px; margin: 0 auto; }
-
-    div[data-testid="stButton"] > button {
-        background-color: #1798d3;
-        color: white;
-        border: none;
-        padding: 0.6rem 1.4rem;
-        font-size: 1rem;
-        border-radius: 6px;
-        width: 100%;
-    }
-    div[data-testid="stButton"] > button:hover {
-        background-color: #1270a8;
-    }
-    div[data-testid="stDownloadButton"] > button {
-        border: 1.5px solid #1798d3 !important;
-        color: #1798d3 !important;
-        background: #ffffff !important;
-        padding: 0.6rem 1.4rem;
-        font-size: 1rem;
-        border-radius: 6px;
-        width: 100%;
-    }
-    div[data-testid="stDownloadButton"] > button:hover {
-        background: #f0f8ff !important;
-    }
-    .note {
-        background: #eaf6fb;
-        border-left: 4px solid #1798d3;
-        padding: 0.6rem 1rem;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        color: #0e2841;
-        margin-bottom: 1rem;
-    }
-</style>
-""", unsafe_allow_html=True)
-
 # ── Header ────────────────────────────────────────────────────────────────────
 
-if LOGO_PATH.exists():
-    logo_b64 = _b64_img(LOGO_PATH)
-    st.markdown(
-        f'<div style="display:flex;align-items:center;gap:18px;margin-bottom:6px;">'
-        f'<img src="data:image/jpeg;base64,{logo_b64}" style="height:60px;width:auto;">'
-        f'<span style="font-size:1.75rem;font-weight:700;color:#1798d3;">'
-        f'✏️ Handwriting Sheet Generator</span></div>',
-        unsafe_allow_html=True,
-    )
-else:
-    st.markdown(
-        '<span style="font-size:1.75rem;font-weight:700;color:#1798d3;">'
-        '✏️ Handwriting Sheet Generator</span>',
-        unsafe_allow_html=True,
-    )
+st.markdown(logo_html("Handwriting Sheet Generator"), unsafe_allow_html=True)
 
 st.divider()
 
