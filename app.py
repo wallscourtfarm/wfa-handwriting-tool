@@ -2,6 +2,7 @@ import streamlit as st
 import tempfile
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 import handwriting_sheet as hs
@@ -9,7 +10,7 @@ import handwriting_sheet as hs
 # ── Page config ───────────────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title='Handwriting Sheet Generator',
+    page_title='WFA Handwriting Sheet Generator',
     page_icon='✏️',
     layout='centered',
 )
@@ -22,14 +23,22 @@ def load_fonts():
 
 load_fonts()
 
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+LOGO_PATH = Path('assets/wfa_logo.jpg')
+
+def _b64_img(path):
+    import base64
+    return base64.b64encode(Path(path).read_bytes()).decode()
+
 # ── Styles ────────────────────────────────────────────────────────────────────
 
 st.markdown("""
 <style>
-    .main { max-width: 720px; }
-    h1 { color: #0e2841; }
-    .stButton > button {
-        background-color: #156082;
+    div[data-testid="stMainBlockContainer"] { max-width: 860px; margin: 0 auto; }
+
+    div[data-testid="stButton"] > button {
+        background-color: #1798d3;
         color: white;
         border: none;
         padding: 0.6rem 1.4rem;
@@ -37,20 +46,24 @@ st.markdown("""
         border-radius: 6px;
         width: 100%;
     }
-    .stButton > button:hover { background-color: #0e2841; }
-    .stDownloadButton > button {
-        background-color: #1a5c2a;
-        color: white;
-        border: none;
+    div[data-testid="stButton"] > button:hover {
+        background-color: #1270a8;
+    }
+    div[data-testid="stDownloadButton"] > button {
+        border: 1.5px solid #1798d3 !important;
+        color: #1798d3 !important;
+        background: #ffffff !important;
         padding: 0.6rem 1.4rem;
         font-size: 1rem;
         border-radius: 6px;
         width: 100%;
     }
-    .stDownloadButton > button:hover { background-color: #124020; }
+    div[data-testid="stDownloadButton"] > button:hover {
+        background: #f0f8ff !important;
+    }
     .note {
-        background: #eaf4fb;
-        border-left: 4px solid #156082;
+        background: #eaf6fb;
+        border-left: 4px solid #1798d3;
         padding: 0.6rem 1rem;
         border-radius: 4px;
         font-size: 0.9rem;
@@ -62,7 +75,24 @@ st.markdown("""
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
-st.title('✏️ Handwriting Sheet Generator')
+if LOGO_PATH.exists():
+    logo_b64 = _b64_img(LOGO_PATH)
+    st.markdown(
+        f'<div style="display:flex;align-items:center;gap:18px;margin-bottom:6px;">'
+        f'<img src="data:image/jpeg;base64,{logo_b64}" style="height:60px;width:auto;">'
+        f'<span style="font-size:1.75rem;font-weight:700;color:#1798d3;">'
+        f'✏️ Handwriting Sheet Generator</span></div>',
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        '<span style="font-size:1.75rem;font-weight:700;color:#1798d3;">'
+        '✏️ Handwriting Sheet Generator</span>',
+        unsafe_allow_html=True,
+    )
+
+st.divider()
+
 st.markdown(
     '<div class="note">Type or paste your words or sentences below — '
     'one per line. Choose a font style and how many practice lines to '
@@ -107,9 +137,9 @@ with col2:
 # ── Generate ──────────────────────────────────────────────────────────────────
 
 FONT_MAP = {
-    'Print — Sassoon Dotted':      'sassoon',
+    'Print — Sassoon Dotted':       'sassoon',
     'Pre-cursive — Linkpen Dotted': 'linkpen',
-    'Cursive — XCCW Dotted':       'xccw',
+    'Cursive — XCCW Dotted':        'xccw',
 }
 
 def build_pdf(lines, title, font_style, practice_lines):
